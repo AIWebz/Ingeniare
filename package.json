@@ -1,0 +1,82 @@
+{
+  "name": "ingeniare",
+  "productName": "Ingeniare",
+  "version": "1.0.0",
+  "description": "Ingeniare - an on-device AI that generates interactive 3D engineering instructions.",
+  "type": "module",
+  "main": "electron/main.cjs",
+  "author": "Ingeniare",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "web": "node scripts/serve.js",
+    "train": "node scripts/train.js",
+    "test": "node scripts/test.js",
+    "dist": "electron-builder",
+    "dist:win": "electron-builder --win",
+    "dist:mac": "electron-builder --mac",
+    "dist:linux": "electron-builder --linux"
+  },
+  "build": {
+    "appId": "com.ingeniare.app",
+    "productName": "Ingeniare",
+    "files": [
+      "electron/**",
+      "src/**",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "category": "public.app-category.education"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Education",
+      "maintainer": "Ingeniare <ingeniare@users.noreply.github.com>"
+    },
+    "icon": "build/icon.png",
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "dependencies": {
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aiwebz/ingeniare.git"
+  }
+}

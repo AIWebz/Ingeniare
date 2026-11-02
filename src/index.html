@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'sha256-wQ6SBKbPbreU8T749HTn4NtIzNBbYnJaA6M/4pB53KA='" />
+  <title>Ingeniare</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script type="importmap">{ "imports": { "three": "../node_modules/three/build/three.module.js", "three/addons/": "./vendor/" } }</script>
+</head>
+<body>
+  <header>
+    <div class="brand"><span class="logo">⚙</span> Ingeniare <small>AI engineering instructions in 3D</small></div>
+    <div class="head-actions">
+      <button id="btnExport" title="Export instructions as Markdown">Export</button>
+      <button id="btnShot" title="Save a PNG of the 3D view">Screenshot</button>
+    </div>
+  </header>
+  <main>
+    <aside id="left">
+      <label for="prompt" class="lbl">What do you want to engineer?</label>
+      <textarea id="prompt" rows="3" placeholder="e.g. a 6 ft tall oak bookshelf with 5 shelves"></textarea>
+      <button id="btnGen" class="primary">Generate instructions</button>
+      <div id="examples" class="chips"></div>
+      <section id="insight" class="card hidden">
+        <h3>AI reasoning</h3>
+        <div id="intent"></div>
+        <div id="extracted" class="muted small"></div>
+        <div id="oodNote" class="note hidden"></div>
+      </section>
+      <section id="paramsCard" class="card hidden">
+        <h3>Design parameters</h3>
+        <div id="params"></div>
+      </section>
+      <section class="card small muted" id="modelInfo"></section>
+    </aside>
+    <section id="center">
+      <div id="viewport"></div>
+      <div id="toolbar">
+        <label>Explode <input id="explode" type="range" min="0" max="1" step="0.01" value="0" /></label>
+        <label><input id="ghost" type="checkbox" /> Show upcoming</label>
+        <label><input id="rotate" type="checkbox" /> Auto-rotate</label>
+        <label><input id="wire" type="checkbox" /> Wireframe</label>
+        <button id="btnReset">Reset view</button>
+      </div>
+      <div id="partTip" class="hidden"></div>
+      <div id="empty">Describe a project and Ingeniare will design it, list the exact parts and build it step by step in 3D.</div>
+    </section>
+    <aside id="right">
+      <div id="planHead"></div>
+      <nav class="tabs"><button data-tab="steps" class="active">Steps</button><button data-tab="parts">Parts</button><button data-tab="tools">Tools &amp; cuts</button></nav>
+      <div id="tab-steps" class="tab">
+        <div id="stepCard"></div>
+        <div class="stepnav"><button id="prev">◀ Prev</button><span id="stepCount"></span><button id="next" class="primary">Next ▶</button></div>
+        <ol id="stepList"></ol>
+      </div>
+      <div id="tab-parts" class="tab hidden"><table id="bom"></table></div>
+      <div id="tab-tools" class="tab hidden"><h4>Tools</h4><ul id="tools"></ul><h4>Cut list / purchasing</h4><ul id="cuts"></ul></div>
+    </aside>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
