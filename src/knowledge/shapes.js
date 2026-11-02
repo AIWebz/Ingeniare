@@ -37,3 +37,14 @@ export const lipo = (l, w, h, c = '#f57c00') => comp(at(box(l, h, w, c, 'plastic
 
 // ---------- hardware (inches) ----------
 export const screw = (len = 1.25) => comp(at(cyl(0.08, len, '#9aa0a6', 'metal')), at(cyl(0.17, 0.08, '#9aa0a6', 'metal'), [0, len / 2, 0]));
+
+// ---------- advanced primitives (rendered with bevels, curves and PBR materials) ----------
+export const rbox = (w, h, d, c = '#ff7a1a', m = 'paint', rad) => ({ t: 'rbox', s: [w, h, d], c, m, rad: rad ?? Math.min(w, h, d) * 0.18 });
+export const lathe = (pts, c = '#ff7a1a', m = 'paint') => ({ t: 'lathe', pts, c, m });
+export const hull = (L, B, D, c = '#ff7a1a', m = 'paint') => ({ t: 'hull', L, B, D, c, m });
+export const wing = (span, chord, thick, c = '#f4f4f4', m = 'paint') => ({ t: 'wing', span, chord, thick, c, m });
+export const tri = (pts, thick, c = '#ff7a1a', m = 'paint') => ({ t: 'tri', pts, thick, c, m });
+export const gear = (r, teeth, thick, c = '#b8bec6', m = 'metal') => ({ t: 'gear', r, teeth, thick, c, m });
+export const tube = (pts, r, c = '#b8bec6', m = 'metal') => ({ t: 'tube', pts, r, c, m });
+export const capsule = (r, len, c = '#ff7a1a', m = 'paint', axis = 'y') => ({ t: 'capsule', r, len, c, m, axis });
+export const ellipsoid = (rx, ry, rz, c = '#ff7a1a', m = 'paint') => ({ t: 'sphere', r: 1, sc: [rx, ry, rz], c, m });

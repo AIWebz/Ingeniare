@@ -17,7 +17,7 @@ export default {
     return {
       summary: `An L-shaped desk lamp: ${p.material} base, ${H} mm brushed-aluminium post and a ${len} mm aluminium light bar with ${p.kelvin} 2835 LED strip (${Math.round(len / 8.3)} LEDs, ${watts} W, ~${lumens} lm, ${amps} A at 12 V), knob dimmer and rocker switch. Powered by a 12 V 2 A adapter.`,
       difficulty: 'Beginner', time: '3 hours', cost: usd(48),
-      tools: ['Soldering iron (350 °C) + 0.8 mm rosin-core solder', 'Wire stripper', 'Heat gun or lighter (heat-shrink)', 'Drill with 8 mm, 12 mm and 22 mm (Forstner) bits', 'Hacksaw with metal blade', 'Multimeter', 'Sandpaper 120/220', 'Epoxy (JB Weld 5-minute)'],
+      tools: ['Soldering iron (350 °C) + 0.8 mm rosin-core solder', 'Wire stripper', 'Heat gun or lighter (heat-shrink)', 'Drill with 8 mm, 12 mm and 22 mm (Forstner) bits', 'Hacksaw with metal blade', 'Multimeter', 'Sandpaper 120/220', 'Epoxy (5-minute two-part epoxy)'],
       parts: [
         { id: 'base', name: 'Base', spec: `${p.material} block, 160 x 160 x 30 mm`, qty: 1, shape: box(160, 30, 160, wood) },
         { id: 'post', name: 'Post', spec: `12 mm OD x 1 mm wall aluminium tube, ${H} mm`, qty: 1, shape: cyl(6, H, '#c9ccd1', 'metal') },
@@ -27,7 +27,7 @@ export default {
         { id: 'psu', name: 'Power supply', spec: '12 V DC 2 A UL-listed wall adapter, 5.5 x 2.1 mm barrel', qty: 1, shape: null },
         { id: 'jack', name: 'DC jack', spec: '5.5 x 2.1 mm panel-mount DC barrel jack (12 mm hole)', qty: 1, shape: cyl(6, 14, '#222', 'plastic', 'x') },
         { id: 'dimmer', name: 'Dimmer', spec: '12 V PWM LED dimmer module with 10 kΩ knob pot (5 A)', qty: 1, shape: comp(at(box(30, 10, 22, '#1d6b3a', 'pcb')), at(cyl(6, 16, '#111', 'plastic'), [0, 13, 0])) },
-        { id: 'switch', name: 'Switch', spec: 'KCD1 rocker switch, 20 x 13 mm cutout', qty: 1, shape: switchRocker() },
+        { id: 'switch', name: 'Switch', spec: 'Small rocker switch (20 x 13 mm cutout)', qty: 1, shape: switchRocker() },
         { id: 'wire', name: 'Wire', spec: '22 AWG 2-conductor red/black silicone wire, 1.5 m + 3 mm heat-shrink', qty: 1, shape: null },
         { id: 'feet', name: 'Feet', spec: '4 x 12 mm self-adhesive cork/rubber pads', qty: 4, shape: null },
       ],

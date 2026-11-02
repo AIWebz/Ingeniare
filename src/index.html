@@ -1,63 +1,109 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self' 'sha256-wQ6SBKbPbreU8T749HTn4NtIzNBbYnJaA6M/4pB53KA='" />
   <title>Ingeniare</title>
+  <link rel="icon" href="assets/favicon.png" />
   <link rel="stylesheet" href="styles.css" />
   <script type="importmap">{ "imports": { "three": "../node_modules/three/build/three.module.js", "three/addons/": "./vendor/" } }</script>
 </head>
 <body>
-  <header>
-    <div class="brand"><span class="logo">⚙</span> Ingeniare <small>AI engineering instructions in 3D</small></div>
-    <div class="head-actions">
-      <button id="btnExport" title="Export instructions as Markdown">Export</button>
-      <button id="btnShot" title="Save a PNG of the 3D view">Screenshot</button>
+  <header class="topbar">
+    <div class="brand">
+      <img src="assets/logo-mark.png" alt="" class="mark" />
+      <img src="assets/logo-word.png" alt="Ingeniare" class="word" />
+    </div>
+    <form id="askForm" class="ask">
+      <svg class="ask-ico" viewBox="0 0 24 24"><path d="M12 2l1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9z"/></svg>
+      <input id="prompt" autocomplete="off" placeholder="What do you want to engineer? Try “a solar-powered boat with lights”" />
+      <button type="submit" id="btnGen" class="btn-primary">Engineer it</button>
+    </form>
+    <div class="top-actions">
+      <button class="icon-btn" id="btnExport" title="Export instructions (Markdown)"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg></button>
+      <button class="icon-btn" id="btnShot" title="Save 3D screenshot"><svg viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></button>
+      <button class="icon-btn" id="btnSettings" title="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg></button>
     </div>
   </header>
-  <main>
-    <aside id="left">
-      <label for="prompt" class="lbl">What do you want to engineer?</label>
-      <textarea id="prompt" rows="3" placeholder="e.g. a 6 ft tall oak bookshelf with 5 shelves"></textarea>
-      <button id="btnGen" class="primary">Generate instructions</button>
-      <div id="examples" class="chips"></div>
-      <section id="insight" class="card hidden">
-        <h3>AI reasoning</h3>
+
+  <main class="layout">
+    <aside class="panel left">
+      <section class="card">
+        <div class="card-h"><h3>AI analysis</h3><span id="modeBadge" class="badge"></span></div>
         <div id="intent"></div>
-        <div id="extracted" class="muted small"></div>
-        <div id="oodNote" class="note hidden"></div>
+        <div id="extracted" class="chips small"></div>
       </section>
-      <section id="paramsCard" class="card hidden">
-        <h3>Design parameters</h3>
+      <section class="card" id="featCard">
+        <div class="card-h"><h3>Subsystems</h3><span class="hint">tap to add / remove</span></div>
+        <div id="features" class="chips"></div>
+      </section>
+      <section class="card">
+        <div class="card-h"><h3>Design parameters</h3></div>
         <div id="params"></div>
       </section>
-      <section class="card small muted" id="modelInfo"></section>
+      <section class="card">
+        <div class="card-h"><h3>Ideas to try</h3></div>
+        <div id="examples" class="chips"></div>
+      </section>
+      <p id="modelInfo" class="foot"></p>
     </aside>
-    <section id="center">
+
+    <section class="stage">
       <div id="viewport"></div>
-      <div id="toolbar">
-        <label>Explode <input id="explode" type="range" min="0" max="1" step="0.01" value="0" /></label>
-        <label><input id="ghost" type="checkbox" /> Show upcoming</label>
-        <label><input id="rotate" type="checkbox" /> Auto-rotate</label>
-        <label><input id="wire" type="checkbox" /> Wireframe</label>
-        <button id="btnReset">Reset view</button>
+      <div id="stepChip" class="glass-chip hidden"></div>
+      <div id="partTip" class="glass-tip hidden"></div>
+      <div id="busy" class="busy hidden"><div class="spinner"></div><span>Engineering your design…</span></div>
+      <div class="toolbar glass-pill">
+        <button class="tb" id="prev3d" title="Previous step">◀</button>
+        <button class="tb" id="next3d" title="Next step">▶</button>
+        <span class="sep"></span>
+        <label class="tb-range" title="Exploded view"><svg viewBox="0 0 24 24"><path d="M4 4l5 5M20 4l-5 5M4 20l5-5M20 20l-5-5"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg><input id="explode" type="range" min="0" max="1" step="0.01" value="0" /></label>
+        <span class="sep"></span>
+        <button class="tb toggle" id="ghost" title="Show upcoming parts"><svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        <button class="tb toggle" id="rotate" title="Auto-rotate"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 11-2.3-5.7M20 4v5h-5"/></svg></button>
+        <button class="tb toggle" id="wire" title="Wireframe"><svg viewBox="0 0 24 24"><path d="M12 2l9 5v10l-9 5-9-5V7z M12 2v20 M3 7l18 10 M21 7L3 17"/></svg></button>
+        <button class="tb" id="btnReset" title="Reset camera"><svg viewBox="0 0 24 24"><path d="M3 12h4m10 0h4M12 3v4m0 10v4"/><circle cx="12" cy="12" r="4"/></svg></button>
       </div>
-      <div id="partTip" class="hidden"></div>
-      <div id="empty">Describe a project and Ingeniare will design it, list the exact parts and build it step by step in 3D.</div>
     </section>
-    <aside id="right">
-      <div id="planHead"></div>
-      <nav class="tabs"><button data-tab="steps" class="active">Steps</button><button data-tab="parts">Parts</button><button data-tab="tools">Tools &amp; cuts</button></nav>
+
+    <aside class="panel right">
+      <section class="card plan-head" id="planHead"></section>
+      <nav class="seg" id="tabs"><button data-tab="steps" class="on">Steps</button><button data-tab="parts">What you need</button><button data-tab="tools">Tools</button></nav>
       <div id="tab-steps" class="tab">
-        <div id="stepCard"></div>
-        <div class="stepnav"><button id="prev">◀ Prev</button><span id="stepCount"></span><button id="next" class="primary">Next ▶</button></div>
-        <ol id="stepList"></ol>
+        <div id="stepCard" class="card step"></div>
+        <div class="stepnav"><button id="prev" class="btn-ghost">◀ Back</button><div class="progress"><div id="progBar"></div></div><button id="next" class="btn-primary">Next ▶</button></div>
+        <ol id="stepList" class="timeline"></ol>
       </div>
-      <div id="tab-parts" class="tab hidden"><table id="bom"></table></div>
-      <div id="tab-tools" class="tab hidden"><h4>Tools</h4><ul id="tools"></ul><h4>Cut list / purchasing</h4><ul id="cuts"></ul></div>
+      <div id="tab-parts" class="tab hidden"><div id="bom"></div></div>
+      <div id="tab-tools" class="tab hidden"><div class="card"><h4>Tools</h4><ul id="tools" class="ticks"></ul></div><div class="card" id="cutCard"><h4>Cut list</h4><ul id="cuts" class="ticks"></ul></div></div>
     </aside>
   </main>
+
+  <div id="settings" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="setTitle">
+    <div class="sheet">
+      <div class="sheet-h"><h2 id="setTitle">Settings</h2><button class="icon-btn" id="closeSettings" title="Close">✕</button></div>
+      <div class="sheet-b">
+        <div class="set-group"><h4>Appearance</h4>
+          <div class="set-row"><span>Theme</span><div class="seg sm" data-set="theme"><button data-v="light">Light</button><button data-v="dark">Dark</button><button data-v="system">System</button></div></div>
+          <div class="set-row"><span>Model accent colour</span><div class="swatches" data-set="accent"></div></div>
+        </div>
+        <div class="set-group"><h4>Instructions</h4>
+          <div class="set-row"><span>Units</span><div class="seg sm" data-set="units"><button data-v="imperial">Imperial</button><button data-v="metric">Metric</button></div></div>
+          <div class="set-row"><span>Skill level</span><div class="seg sm" data-set="skill"><button data-v="beginner">Beginner</button><button data-v="intermediate">Intermediate</button><button data-v="expert">Expert</button></div></div>
+          <div class="set-row"><span>Use detailed expert templates when available</span><label class="switch"><input type="checkbox" data-set="experts" /><i></i></label></div>
+        </div>
+        <div class="set-group"><h4>3D viewer</h4>
+          <div class="set-row"><span>Render quality</span><div class="seg sm" data-set="quality"><button data-v="high">High</button><button data-v="balanced">Balanced</button><button data-v="performance">Fast</button></div></div>
+          <div class="set-row"><span>Assembly animation speed</span><input type="range" min="0" max="3" step="0.25" data-set="animSpeed" /></div>
+          <div class="set-row"><span>Show floor grid</span><label class="switch"><input type="checkbox" data-set="grid" /><i></i></label></div>
+          <div class="set-row"><span>Auto-rotate new designs</span><label class="switch"><input type="checkbox" data-set="autoRotate" /><i></i></label></div>
+        </div>
+        <div class="set-group"><h4>About the AI</h4><p id="aboutAI" class="muted small"></p></div>
+      </div>
+      <div class="sheet-f"><button class="btn-ghost" id="resetSettings">Reset to defaults</button><button class="btn-primary" id="doneSettings">Done</button></div>
+    </div>
+  </div>
   <script type="module" src="app.js"></script>
 </body>
 </html>

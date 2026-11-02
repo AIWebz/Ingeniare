@@ -4,7 +4,7 @@ import { buildDataset, LABELS, EVAL, CLASSES } from '../src/ai/dataset.js';
 import { featurize, FEATURE_DIM, tokenize, stem } from '../src/ai/features.js';
 import { MLP, mulberry32 } from '../src/ai/network.js';
 
-const data = buildDataset({ perClass: 260 });
+const data = buildDataset({ perClass: 400 });
 const rnd = mulberry32(3);
 data.sort(() => rnd() - 0.5);
 const nVal = Math.floor(data.length * 0.1);
@@ -14,7 +14,7 @@ const X = train.map((d) => featurize(d.text)), Y = train.map((d) => d.y);
 const net = new MLP(FEATURE_DIM, 64, LABELS.length, 11);
 console.log(`Training MLP ${FEATURE_DIM}->64->${LABELS.length} on ${train.length} examples (${val.length} validation)`);
 const t0 = Date.now();
-net.train(X, Y, { epochs: 14, lr: 0.002, batch: 32, dropout: 0.2, log: (ep, loss) => console.log(`  epoch ${String(ep).padStart(2)}  loss ${loss.toFixed(4)}`) });
+net.train(X, Y, { epochs: 12, lr: 0.002, batch: 32, dropout: 0.2, log: (ep, loss) => console.log(`  epoch ${String(ep).padStart(2)}  loss ${loss.toFixed(4)}`) });
 
 const acc = (rows) => rows.filter(([text, y]) => { const p = net.predict(featurize(text)); return p.indexOf(Math.max(...p)) === y; }).length / rows.length;
 const valAcc = acc(val.map((d) => [d.text, d.y]));
@@ -22,7 +22,7 @@ const evalAcc = acc(EVAL.map(([t, l]) => [t, LABELS.indexOf(l)]));
 console.log(`validation accuracy ${(valAcc * 100).toFixed(1)}%  |  held-out human phrasings ${(evalAcc * 100).toFixed(1)}%  |  ${((Date.now() - t0) / 1000).toFixed(1)} s`);
 
 const vocab = new Set();
-for (const d of data) for (const t of tokenize(d.text)) vocab.add(stem(t));
+
 for (const names of Object.values(CLASSES)) for (const n of names) for (const t of tokenize(n)) vocab.add(stem(t));
 const GENERIC = ['build', 'make', 'engineer', 'design', 'construct', 'create', 'assemble', 'put', 'together', 'diy', 'craft', 'fabricate', 'how', 'do', 'guide', 'step', 'by', 'instruction', 'plan', 'help', 'show', 'what', 'need', 'simple', 'cheap', 'large', 'small', 'from', 'scratch', 'out', 'that', 'this'];
 GENERIC.forEach((g) => vocab.delete(stem(g)));

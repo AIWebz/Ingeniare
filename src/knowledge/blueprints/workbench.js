@@ -37,10 +37,10 @@ export default {
         { id: 'railShort', name: 'Short apron rail / joist', spec: `2x4 x ${fin(FW - 3)}`, qty: (2 + mids.length) * (shelf ? 2 : 1), shape: box(1.5, 3.5, FW - 3, fir) },
         { id: 'top', name: 'Top', spec: `3/4" sanded pine/birch plywood, ${fin(L)} x ${fin(Dp)}`, qty: 1, shape: box(L, 0.75, Dp, ply) },
         ...(shelf ? [{ id: 'shelfPanel', name: 'Lower shelf', spec: `1/2" plywood, ${fin(FL)} x ${fin(FW)}, notched 3-1/2" x 3-1/2" at corners`, qty: 1, shape: box(FL, 0.5, FW, ply) }] : []),
-        { id: 'cscrew', name: 'Structural screws', spec: 'SPAX PowerLags / GRK RSS #10 x 3-1/2" T-star construction screws', qty: constrScrews, shape: null },
+        { id: 'cscrew', name: 'Structural screws', spec: '#10 x 3-1/2" star-drive structural/construction screws', qty: constrScrews, shape: null },
         { id: 'tscrew', name: 'Deck screws', spec: '#8 x 1-5/8" coated deck screws (top & shelf)', qty: Math.ceil((2 * L + 2 * Dp) / 8) * (shelf ? 2 : 1), shape: null },
-        { id: 'glue', name: 'Construction adhesive', spec: 'Titebond II or PL Premium, 1 tube', qty: 1, shape: null },
-        { id: 'finish', name: 'Top finish', spec: 'Watco Danish Oil (natural), 1 pt', qty: 1, shape: null },
+        { id: 'glue', name: 'Construction adhesive', spec: 'Wood glue or polyurethane construction adhesive', qty: 1, shape: null },
+        { id: 'finish', name: 'Top finish', spec: 'Danish oil or penetrating finishing oil, ~1 pt', qty: 1, shape: null },
       ],
       steps: [
         { title: 'Cut the legs', text: `Crosscut four 4x4 legs to exactly ${fin(legH)} (working height ${fin(H)} minus the 3/4" top). Cut from both faces with the circular saw (blade depth max ~2-3/8"), then sand the seam flush. Stand all four together — any length difference over 1/32" will make the bench rock.`, add: [{ part: 'leg', p: [-legX, legH / 2, legZ] }, { part: 'leg', p: [legX, legH / 2, legZ] }, { part: 'leg', p: [-legX, legH / 2, -legZ] }, { part: 'leg', p: [legX, legH / 2, -legZ] }] },

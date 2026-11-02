@@ -1,7 +1,7 @@
 import { box, cyl, comp, at } from '../shapes.js';
 import { fin, usd } from '../util.js';
 
-// Cornell Lab "NestWatch" style dimensions per species (inches).
+// Standard nest-box dimensions per species (inches).
 const SPECIES = {
   bluebird: { floor: 5, hole: 1.5, holeH: 6, front: 9, mount: '5 ft on a smooth metal pole, facing an open field' },
   wren: { floor: 4, hole: 1.125, holeH: 5, front: 8, mount: '5-10 ft, near shrubs or a tree edge' },

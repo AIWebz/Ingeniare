@@ -30,27 +30,27 @@ export default {
       { id: 'shelf', name: 'Shelf / top / bottom', spec: `${p.material} ${p.board}, 3/4" x ${fin(D)} x ${fin(Wi)}`, qty: n, shape: box(Wi, T, D, color) },
       { id: 'kick', name: 'Toe kick', spec: `${p.material} ${p.board} ripped to 3-1/2" x ${fin(Wi)}`, qty: 1, shape: box(Wi, kick, T, color) },
       { id: 'back', name: 'Back panel', spec: `1/4" birch plywood, ${fin(W)} x ${fin(H)}`, qty: 1, shape: box(W, H, 0.25, '#e9d6ad') },
-      { id: 'screw', name: 'Pocket-hole screws', spec: 'Kreg SML-C125 1-1/4" #7 coarse-thread washer-head', qty: pocketScrews, shape: screw(1.25) },
+      { id: 'screw', name: 'Pocket-hole screws', spec: '1-1/4" coarse-thread washer-head pocket-hole screws', qty: pocketScrews, shape: screw(1.25) },
       { id: 'brad', name: 'Brad nails', spec: '18-gauge 3/4" brads (or 3/4" #4 screws)', qty: Math.ceil((2 * H + (n + 1) * W) / 6), shape: null },
-      { id: 'glue', name: 'Wood glue', spec: 'Titebond II Premium, 8 oz', qty: 1, shape: null },
+      { id: 'glue', name: 'Wood glue', spec: 'PVA wood glue (water-resistant type), small bottle', qty: 1, shape: null },
       { id: 'strap', name: 'Anti-tip kit', spec: 'Furniture anti-tip strap + #10 x 2-1/2" screw into a wall stud', qty: 1, shape: box(1, 2, 0.2, '#eee', 'plastic') },
-      { id: 'finish', name: 'Finish', spec: 'Minwax Water-Based Polycrylic, satin, 1 qt + 120/180/220-grit sandpaper', qty: 1, shape: null },
+      { id: 'finish', name: 'Finish', spec: 'Water-based polyurethane, satin, ~1 qt / 1 L + 120/180/220-grit sandpaper', qty: 1, shape: null },
     ];
     const z = 0;
     const shelfAdds = ys.map((y) => ({ part: 'shelf', p: [0, y, z] }));
     return {
       summary: `A ${ftin(H)} tall, ${fin(W)} wide, ${fin(D)} deep ${p.material} bookshelf with ${n} shelf boards (${fin(gap)} clear between shelves), pocket-hole joinery and a 1/4" plywood back. Rated ~40 lb per shelf.`,
       difficulty: 'Beginner', time: '1 weekend (6-8 h + finish drying)', cost: usd(cost),
-      tools: ['Circular saw or miter saw (40T blade)', 'Kreg R3 or 720 pocket-hole jig set for 3/4" stock', 'Cordless drill/driver with #2 square bit', '18-gauge brad nailer (or hammer)', 'Speed square + tape measure', '2x 24" bar clamps', 'Random-orbit sander', 'Safety glasses & hearing protection'],
+      tools: ['Circular saw or miter saw (40T blade)', 'Pocket-hole jig set for 3/4" stock', 'Cordless drill/driver with #2 square bit', '18-gauge brad nailer (or hammer)', 'Speed square + tape measure', '2x 24" bar clamps', 'Random-orbit sander', 'Safety glasses & hearing protection'],
       cutList: cutPlan(bins, stockName),
       parts,
       steps: [
         { title: 'Buy, acclimate and cut the sides', text: `Buy ${bins.length} x ${stockName}${isPly ? ' (one 4x8 sheet)' : ''}. Let the wood sit indoors 48 h. Cut two sides to exactly ${fin(H)}. Clamp them together edge-to-edge and use a speed square to mark shelf lines at ${ys.map((y) => fin(y - T / 2)).join(', ')} from the bottom (bottom face of each shelf).`, details: ['Check each board for twist by sighting down its length; reject any that rock on the floor.', 'Mark the inside face of each side with an "X" so the marks stay hidden.'], add: [{ part: 'side', p: [-(W / 2 - T / 2), H / 2, z] }] },
-        { title: `Cut ${n} shelves and drill pocket holes`, text: `Cut ${n} shelf boards to ${fin(Wi)} (outer width ${fin(W)} minus two 3/4" sides). Set the Kreg jig and drill collar for 3/4" stock and drill 3 pocket holes on the underside of each end (1-1/2" from each edge and one centred). Glue and drive 1-1/4" coarse screws to fix each shelf to the LEFT side on its line.`, details: ['Top shelf: drill pocket holes on the top face only if the top will be above eye level; otherwise keep them underneath.', 'Wipe squeeze-out with a damp rag within 5 minutes.'], add: shelfAdds },
+        { title: `Cut ${n} shelves and drill pocket holes`, text: `Cut ${n} shelf boards to ${fin(Wi)} (outer width ${fin(W)} minus two 3/4" sides). Set the pocket-hole jig and drill collar for 3/4" stock and drill 3 pocket holes on the underside of each end (1-1/2" from each edge and one centred). Glue and drive 1-1/4" coarse screws to fix each shelf to the LEFT side on its line.`, details: ['Top shelf: drill pocket holes on the top face only if the top will be above eye level; otherwise keep them underneath.', 'Wipe squeeze-out with a damp rag within 5 minutes.'], add: shelfAdds },
         { title: 'Attach the right side', text: `Lay the assembly on its back. Spread a thin bead of glue on each shelf end, stand the right side on, align to the marks and drive the remaining ${pocketScrews / 2} pocket screws. Clamp across the top and bottom shelves while driving.`, add: [{ part: 'side', p: [W / 2 - T / 2, H / 2, z] }] },
         { title: 'Install the toe kick', text: `Rip a ${fin(Wi)} piece to 3-1/2" wide. Glue it under the bottom shelf, flush with the front edges, and fix with 2 pocket screws per end into the sides. It stiffens the base and hides the floor gap.`, add: [{ part: 'kick', p: [0, kick / 2, D / 2 - T / 2] }] },
         { title: 'Square it and fit the back', text: `Measure both diagonals; push the long corner until they match within 1/16". Lay the ${fin(W)} x ${fin(H)} plywood back on, align to one corner, and fire 3/4" brads every 6" into the sides and every shelf. The back now locks the case square.`, warn: 'Do not glue the back if you will ever need to move the case through a narrow doorway — brads alone allow repair.', add: [{ part: 'back', p: [0, H / 2, -D / 2 - 0.125] }] },
-        { title: 'Sand and finish', text: 'Ease all sharp edges with 180 grit. Sand faces 120 → 180 → 220. Vacuum, wipe with a tack cloth, then brush 3 thin coats of satin Polycrylic, waiting 2 h between coats and scuffing with 320 grit between coats 2 and 3. Cure 24 h before loading books.', add: [] },
+        { title: 'Sand and finish', text: 'Ease all sharp edges with 180 grit. Sand faces 120 → 180 → 220. Vacuum, wipe with a tack cloth, then brush 3 thin coats of satin water-based polyurethane, waiting 2 h between coats and scuffing with 320 grit between coats 2 and 3. Cure 24 h before loading books.', add: [] },
         { title: 'Anchor to the wall', text: `Stand the case in place, locate a stud with a stud finder, and fasten the anti-tip strap to the top shelf back edge and to the stud with the #10 x 2-1/2" screw. Required for any bookshelf over 30" tall.`, warn: 'Tip-over injuries are common with tall furniture — never skip the anchor.', add: [{ part: 'strap', p: [0, H - 2, -D / 2 - 0.5] }] },
       ],
     };

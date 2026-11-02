@@ -27,14 +27,14 @@ export default {
     return {
       summary: `A ${ftin(L)} x ${ftin(W)} cedar raised bed, ${fin(Hb)} deep (${n} courses of 2x6), with 4x4 corner posts and galvanized gopher mesh. Holds ${r1(vol)} cu ft (${r1(vol / 27)} cu yd) of soil.`,
       difficulty: 'Beginner', time: '3-4 hours', cost: usd(cost),
-      tools: ['Circular saw or miter saw', 'Impact driver with T25 bit', 'Heavy-duty stapler (Arrow T50) with 1/2" galvanized staples', 'Tin snips', '4 ft level, tape measure, square', 'Flat shovel', 'Work gloves'],
+      tools: ['Circular saw or miter saw', 'Impact driver with T25 bit', 'Heavy-duty staple gun with 1/2" galvanized staples', 'Tin snips', '4 ft level, tape measure, square', 'Flat shovel', 'Work gloves'],
       cutList: [`${2 * n} x 2x6 x ${longStock / 12} ft cedar: cut each to ${fin(L)}`, ...cutPlan(ends, '2x6 x 8 ft cedar'), ...cutPlan(postBins, '4x4 x 8 ft cedar post')],
       parts: [
         { id: 'long', name: 'Long side board', spec: `Western red cedar 2x6 (1-1/2" x 5-1/2") x ${fin(L)}`, qty: 2 * n, shape: box(L, 5.5, 1.5, cedar) },
         { id: 'end', name: 'End board', spec: `Cedar 2x6 x ${fin(W - 3)}`, qty: 2 * n, shape: box(1.5, 5.5, W - 3, cedar) },
         { id: 'post', name: 'Corner / mid post', spec: `Cedar 4x4 x ${fin(Hb)}`, qty: posts.length, shape: box(3.5, Hb, 3.5, '#a85c35') },
         { id: 'mesh', name: 'Gopher mesh', spec: `1/2" galvanized hardware cloth, 19-gauge, ${fin(L - 3)} x ${fin(W - 3)} (buy a 4 ft x 10 ft roll)`, qty: 1, shape: box(L - 3, 0.06, W - 3, '#9ea7ad', 'metal') },
-        { id: 'screws', name: 'Exterior screws', spec: '#10 x 3" coated exterior deck screws (GRK or Deckmate)', qty: posts.length * n * 2 + 4 * n * 2, shape: null },
+        { id: 'screws', name: 'Exterior screws', spec: '#10 x 3" coated exterior deck screws', qty: posts.length * n * 2 + 4 * n * 2, shape: null },
         { id: 'soil', name: 'Soil mix', spec: `${r1(vol)} cu ft: 60% topsoil (${r1(vol * 0.6)}), 30% compost (${r1(vol * 0.3)}), 10% perlite or pine fines (${r1(vol * 0.1)})`, qty: 1, shape: box(L - 3.2, Hb - 1, W - 3.2, '#4a3222', 'soil') },
       ],
       steps: [
