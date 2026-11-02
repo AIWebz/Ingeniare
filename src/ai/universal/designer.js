@@ -1,7 +1,7 @@
 // Universal procedural designer: turns ANY request into a structured build plan
 // and a detailed 3D model by combining a category archetype (chosen by the
 // neural network) with keyword-driven subsystems (motors, solar, lights, ...).
-import { box, cyl, sphere, torus, comp, at, rbox, lathe, hull, wing, tri, gear, tube, capsule, ellipsoid } from '../../knowledge/shapes.js';
+import { box, cyl, sphere, torus, comp, at, rbox, lathe, hull, wing, tri, gear, tube, capsule, ellipsoid, profile } from '../../knowledge/shapes.js';
 
 const has = (s, re) => re.test(s);
 
@@ -180,7 +180,7 @@ GEN.structure = (b, c) => {
   return { box: { L, H: top + wallH + rise, W }, roofY: top + wallH + rise };
 };
 
-const wheelShape = (r, w, c) => comp(at(torus(r - w * 0.35, w * 0.42, '#1d1d1f', 'rubber', 'x')), at(cyl(r * 0.62, w * 0.7, c, 'chrome', 'x')), ...[0, 72, 144, 216, 288].map((a) => at(box(w * 0.5, r * 0.55, r * 0.1, '#2b2b2b', 'metal'), [0, Math.cos(a / 57.3) * r * 0.3, Math.sin(a / 57.3) * r * 0.3], [a, 0, 0])));
+const wheelShape = (r, w, c) => comp(at(torus(r - w * 0.35, w * 0.42, '#1d1d1f', 'rubber', 'x')), ...Array.from({ length: 18 }, (_, i) => at(box(w * 0.7, r * 0.1, r * 0.05, '#151515', 'rubber'), [0, Math.cos(i * 20 / 57.3) * (r - w * 0.02), Math.sin(i * 20 / 57.3) * (r - w * 0.02)], [i * 20, 0, 0])), at(cyl(r * 0.62, w * 0.7, c, 'chrome', 'x')), ...[0, 72, 144, 216, 288].map((a) => at(box(w * 0.5, r * 0.55, r * 0.1, '#2b2b2b', 'metal'), [0, Math.cos(a / 57.3) * r * 0.3, Math.sin(a / 57.3) * r * 0.3], [a, 0, 0])));
 
 GEN.land_vehicle = (b, c) => {
   const { L, W, H, mat, len, p, accent } = c;
@@ -216,7 +216,9 @@ GEN.land_vehicle = (b, c) => {
   b.part('chassis', 'Chassis', `${mat.name === 'wood' ? 'Plywood/hardwood' : 'Welded steel square tube (25-40 mm)'} ladder frame, ${len(L)} x ${len(W * 0.7)}`, rbox(L * 0.92, 6, W * 0.7, '#3a3f47', 'metal', 1.2));
   b.part('axle', 'Axle', `Steel axle, ${len(W)} long, with bearings / pillow blocks`, cyl(1.6, W, '#c9ced6', 'chrome', 'z'));
   b.part('wheel', 'Wheel', `${len(2 * r)} wheel with tyre and bearing hub`, wheelShape(r, r * 0.6, '#d7dbe0'));
-  b.part('body', 'Body shell', `${mat.name === 'wood' ? 'Thin plywood' : 'Fibreglass, aluminium sheet or 3D-printed'} body panels, painted`, rbox(L * 0.85, H * 0.45, W * 0.86, accent, 'paint', Math.min(H * 0.18, 18)));
+  const bh = H * 0.55, bl = L * 0.9;
+  b.part('body', 'Body shell', `${mat.name === 'wood' ? 'Thin plywood' : 'Fibreglass, aluminium sheet or 3D-printed'} body panels, painted`, profile([[-bl / 2, 0], [-bl * 0.1, -bh * 0.02], [bl / 2, 0], [bl * 0.52, bh * 0.28], [bl * 0.36, bh * 0.45], [bl * 0.12, bh * 0.62], [-bl * 0.08, bh], [-bl * 0.36, bh * 0.92], [-bl * 0.5, bh * 0.55]], W * 0.86, accent, 'paint', W * 0.12));
+  b.part('canopy', 'Windscreen / canopy', 'Polycarbonate windscreen, heat-formed', profile([[-bl * 0.04, 0], [bl * 0.2, 0], [-bl * 0.02, bh * 0.36], [-bl * 0.2, bh * 0.34]], W * 0.7, '#9fd4ff', 'glass', W * 0.06));
   const s1 = b.stage('Build the chassis', `Build a rectangular frame ${len(L * 0.92)} x ${len(W * 0.7)} with cross-members every 40 cm. Measure diagonals — equal within 3 mm means square.`);
   b.put(s1, 'chassis', [0, cl + 3, 0]);
   const s2 = b.stage('Mount axles and wheels', `Mount front and rear axles ${len(L * 0.7)} apart (the wheelbase). Use bearings at each wheel and lock-nuts or cotter pins on the axle ends.`);
@@ -228,7 +230,9 @@ GEN.land_vehicle = (b, c) => {
     b.put(s3, 'seat', [-L * 0.1, cl + 10, 0]); b.put(s3, 'steer', [L * 0.12, cl + 40, 0], [0, 0, 25]);
   } else {
     const s3 = b.stage('Fit the body shell', 'Shape the body panels, sand, prime and paint 2-3 thin coats, then fasten the shell to the chassis with rubber-isolated mounts.');
-    b.put(s3, 'body', [0, cl + 6 + H * 0.225, 0]);
+    b.put(s3, 'body', [0, cl + 6, 0]);
+    const s3b = b.stage('Fit the windscreen', 'Heat-form the polycarbonate windscreen over a wooden buck at 160 °C, trim it and fix it with rubber-edged clamps.');
+    b.put(s3b, 'canopy', [bl * 0.08, cl + 6 + bh * 0.62, 0]);
   }
   return { box: { L, H: cl + H * 0.5, W }, covers: ['wheels'], mount: { x: -L * 0.3, y: cl + 8 } };
 };
@@ -374,7 +378,7 @@ GEN.robot = (b, c) => {
     return { box: { L: s * 0.6, H: s * 0.6, W: s * 0.36 }, covers: ['controller', 'arm'] };
   }
   if (has(p, /humanoid|android|mech|biped|companion|animatronic|exoskeleton/)) {
-    b.part('torso', 'Torso', 'Torso shell housing battery and controller', rbox(H * 0.18, H * 0.3, H * 0.26, '#f5f5f5', 'paint', H * 0.04));
+    b.part('torso', 'Torso', 'Torso shell housing battery and controller (3D-printed)', profile([[-H * 0.08, -H * 0.15], [H * 0.08, -H * 0.15], [H * 0.11, H * 0.05], [H * 0.09, H * 0.15], [-H * 0.09, H * 0.15], [-H * 0.11, H * 0.05]], H * 0.24, '#f5f5f5', 'paint', H * 0.05));
     b.part('head', 'Head', 'Head shell with camera/sensor eyes', comp(at(rbox(H * 0.14, H * 0.12, H * 0.15, '#f5f5f5', 'paint', H * 0.04)), at(rbox(H * 0.02, H * 0.05, H * 0.11, '#111', 'glass', H * 0.01), [H * 0.07, 0, 0]), at(eye, [H * 0.075, 0, H * 0.03], [0, 90, 0]), at(eye, [H * 0.075, 0, -H * 0.03], [0, 90, 0])));
     b.part('limb', 'Limb segment', 'Limb segment with servo joint (metal-gear servos recommended)', capsule(H * 0.035, H * 0.16, accent, 'paint'));
     b.part('foot', 'Foot', 'Wide foot plate for balance', rbox(H * 0.12, H * 0.025, H * 0.07, '#2b2f36', 'metal', 1));
@@ -389,7 +393,7 @@ GEN.robot = (b, c) => {
   }
   if (has(p, /dog|quadruped|spider|hexapod|insect/)) {
     const legs = has(p, /spider|hexapod|insect/) ? 6 : 4;
-    b.part('body', 'Body', 'Body shell holding battery, controller and servo driver', rbox(L, H * 0.25, W * 0.6, accent, 'paint', H * 0.08));
+    b.part('body', 'Body', 'Body shell holding battery, controller and servo driver (3D-printed)', profile([[-L / 2, -H * 0.1], [L / 2, -H * 0.1], [L * 0.55, H * 0.05], [L * 0.35, H * 0.14], [-L * 0.4, H * 0.12], [-L * 0.52, 0]], W * 0.6, accent, 'paint', W * 0.12));
     b.part('leg', 'Leg', 'Two- or three-servo leg (hip + knee), metal-gear servos', comp(at(capsule(H * 0.05, H * 0.25, '#f5f5f5', 'paint'), [0, H * 0.12, 0], [0, 0, 25]), at(capsule(H * 0.04, H * 0.3, '#2b2f36', 'metal'), [H * 0.08, -H * 0.12, 0], [0, 0, -15])));
     b.part('head', 'Sensor head', 'Head with distance sensor / camera', comp(at(rbox(H * 0.25, H * 0.2, W * 0.4, '#f5f5f5', 'paint', H * 0.05)), at(eye, [H * 0.13, 0, W * 0.08], [0, 90, 0]), at(eye, [H * 0.13, 0, -W * 0.08], [0, 90, 0])));
     const s1 = b.stage('Body chassis', 'Build the body and mount the battery at the centre so weight is shared equally by all legs.');
@@ -404,13 +408,13 @@ GEN.robot = (b, c) => {
   const r = H * 0.22;
   b.part('chassis', 'Chassis', 'Aluminium or 3D-printed chassis plate with mounting grid', rbox(L, H * 0.18, W * 0.7, '#2b2f36', 'metal', H * 0.04));
   b.part('wheel', 'Drive wheel', `${len(2 * r)} rubber wheel on a geared DC motor`, wheelShape(r, r * 0.7, accent));
-  b.part('shell', 'Body shell', 'Protective top shell', rbox(L * 0.8, H * 0.28, W * 0.6, '#f5f5f5', 'paint', H * 0.08));
+  b.part('shell', 'Body shell', 'Protective top shell (3D-printed in sections or vacuum-formed)', profile([[-L * 0.4, 0], [L * 0.4, 0], [L * 0.42, H * 0.12], [L * 0.25, H * 0.3], [-L * 0.3, H * 0.3], [-L * 0.42, H * 0.15]], W * 0.6, '#f5f5f5', 'paint', W * 0.08));
   b.part('mast', 'Sensor mast', 'Mast with camera/distance sensor head', comp(at(cyl(H * 0.03, H * 0.35, '#2b2f36', 'metal')), at(rbox(H * 0.14, H * 0.12, H * 0.22, accent, 'paint', H * 0.03), [0, H * 0.22, 0]), at(eye, [H * 0.08, H * 0.22, H * 0.05], [0, 90, 0]), at(eye, [H * 0.08, H * 0.22, -H * 0.05], [0, 90, 0])));
   const s1 = b.stage('Chassis and drive', 'Mount the geared motors under the chassis with wheels on each side. Six wheels with a rocker-bogie suspension handle rough ground; four is fine indoors.');
   b.put(s1, 'chassis', [0, r + H * 0.05, 0]);
   for (const x of [-L * 0.35, 0, L * 0.35]) for (const z of [1, -1]) b.put(s1, 'wheel', [x, r, z * W * 0.45], [0, 90, 0]);
   const s2 = b.stage('Body and sensor mast', 'Fit the shell and the sensor mast at the front so the camera/sensor sees over the bumper.');
-  b.put(s2, 'shell', [0, r + H * 0.3, 0]); b.put(s2, 'mast', [L * 0.3, r + H * 0.6, 0]);
+  b.put(s2, 'shell', [0, r + H * 0.15, 0]); b.put(s2, 'mast', [L * 0.3, r + H * 0.6, 0]);
   return { box: { L, H: r + H * 0.8, W }, covers: ['wheels', 'motor', 'sensor', 'camera'], mount: { x: -L * 0.2, y: r + H * 0.45 } };
 };
 

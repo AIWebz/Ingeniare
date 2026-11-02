@@ -33,6 +33,14 @@ Ingeniare's AI is a from-scratch model — no external APIs:
 6. **Expert templates** — ten deeply detailed templates (bookshelf, workbench, raised bed, birdhouse, obstacle-avoiding robot car with full code, LED desk lamp, solar power bank, gaming PC, FPV drone, trebuchet) with computed cut lists and calculations are used automatically when they match (can be turned off in Settings).
 7. **High-detail 3D viewer** (`src/viewer/viewer.js`, Three.js) — physically-based materials (clear-coat paint, chrome, wood grain, glass, carbon, fabric sheen, solar cells, glowing LEDs and screens), image-based reflections, soft shadows, bevelled edges, curved boat hulls, airfoil wings, real gear teeth, tubes and lathed shapes. Parts animate into place step by step; click any part for its spec, use exploded view, ghost upcoming parts, wireframe and auto-rotate.
 
+### Fabrication & 3D printing
+
+A fabrication planner decides how every part is made — **3D print, cut (woodworking), metalwork, sew or buy** — and adds the matching steps. Printed parts get exact slicer settings (filament PLA/PETG/ASA/TPU chosen for the use, layer height, walls, infill, supports, temperatures, splitting into sections for parts larger than the bed) plus estimated filament grams and print time, and a **Download STL** button (real-scale, in millimetres). The whole model exports as **.glb**.
+
+### Interactive build
+
+A welcome screen (no project is generated until you ask), staged AI progress, step checklists you tick off (progress is saved per project), an offline "Ask about this step" assistant, a camera that flies to each step, hover labels, click-for-specs with live dimension callouts, exploded/x-ray/ghost views, cinematic rendering (ambient occlusion, bloom, outlines, anti-aliasing) and keyboard shortcuts (press `?`).
+
 ### Settings
 
 Light / dark / system theme, model accent colour, imperial or metric units, skill level (beginner tips ↔ expert brevity), expert templates on/off, render quality, animation speed, floor grid and auto-rotate. Settings are remembered between sessions.

@@ -48,3 +48,5 @@ export const gear = (r, teeth, thick, c = '#b8bec6', m = 'metal') => ({ t: 'gear
 export const tube = (pts, r, c = '#b8bec6', m = 'metal') => ({ t: 'tube', pts, r, c, m });
 export const capsule = (r, len, c = '#ff7a1a', m = 'paint', axis = 'y') => ({ t: 'capsule', r, len, c, m, axis });
 export const ellipsoid = (rx, ry, rz, c = '#ff7a1a', m = 'paint') => ({ t: 'sphere', r: 1, sc: [rx, ry, rz], c, m });
+// Smooth closed silhouette (x, y points) extruded to `width` with large rounded bevels.
+export const profile = (pts, width, c = '#ff7a1a', m = 'paint', bevel) => ({ t: 'profile', pts, width, c, m, bevel });

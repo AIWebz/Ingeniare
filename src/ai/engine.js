@@ -9,6 +9,18 @@ import { extractParams } from './extract.js';
 import { CATEGORIES } from './universal/categories.js';
 import { universalPlan, FEATURES, MATERIAL_KEYS, defaultSize } from './universal/planner.js';
 import { BLUEPRINTS } from '../knowledge/blueprints/index.js';
+import { planFabrication } from './fabrication.js';
+
+function addFabrication(plan, unit, prompt, category, settings, insertAt) {
+  const fmt = (mm) => (settings.units === 'metric' ? (mm >= 1000 ? `${(mm / 1000).toFixed(2)} m` : `${Math.round(mm)} mm`) : `${Math.round((mm / 25.4) * 4) / 4}"`);
+  const fab = planFabrication(plan, { unit, prompt, category, fmt });
+  const kinds = new Set(plan.steps.map((s) => s.kind));
+  const extra = fab.steps.filter((s) => !(s.kind === 'cut' && plan.cutList));
+  plan.steps.splice(insertAt, 0, ...extra.filter((s) => !kinds.has(s.kind)));
+  plan.fabGroups = fab.groups;
+  plan.geomUnit = unit;
+  return plan;
+}
 
 const EXPERTS = [
   ['bookshelf', /\b(book ?shel(f|ves)|bookcase)\b/],
@@ -60,12 +72,13 @@ export class IngeniareAI {
     if (expertId) {
       const bp = BLUEPRINTS[expertId];
       const params = resolveParams(bp.params, extracted, overrides);
-      const plan = bp.generate(params);
+      const plan = addFabrication(bp.generate(params), bp.unit, lower, expertId, settings, 0);
       return { mode: 'expert', label: expertId, title: bp.title, icon: bp.icon, domain: bp.domain, unit: bp.unit, paramSpecs: bp.params, params, intent, extracted, plan };
     }
 
     const category = forceLabel && (CATEGORIES[forceLabel] || forceLabel === 'custom') ? forceLabel : intent.inDomain ? intent.ranked[0].label : 'custom';
     const u = universalPlan({ category, prompt, extracted, overrides, settings });
+    addFabrication(u.plan, 'cm', lower, category, settings, 1);
     const def = defaultSize(category, ' ' + lower + ' ');
     const dimSpec = (key, label, v, d) => ({ key, label, type: 'length', min: Math.max(1, Math.round(Math.min(v, d) * 0.25)), max: Math.round(Math.max(v, d) * 3), step: Math.max(0.5, Math.round(Math.max(v, d) / 100)), default: d });
     const paramSpecs = [
